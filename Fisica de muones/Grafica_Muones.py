@@ -77,7 +77,7 @@ ax1.set_title("Tiempo vs Numero de decaimientos")
 
 ax1.grid(True)
 
-ax1.legend(loc='upper right')
+ax1.legend(loc='upper right', fontsize=11)
 
 ax2.scatter(valores_unicos2, ocurrencias2,alpha=0.5,color='b', label='Raw Data,\ntoma de datos 2')
 ax2.set_ylabel("Numero\nde eventos", color='b')
@@ -85,7 +85,7 @@ ax2.set_xlabel("Tiempo (ns)")
 
 ax2.grid(True)
 
-ax2.legend(loc='upper right')
+ax2.legend(loc='upper right', fontsize=11)
 
 param_text = r'$N_{0}$' + f" = {param[0]:.2f} " + r'$\pm$' + f" {cov1[0]:.2f}, " + r'$\tau$' + f" = {param[1]/1000:.2f}" + r'$\pm$' + f" {cov1[1]:.2f}"
 ax3.plot(x_, y_, label=f"Toma de datos 1\nAjuste exponencial,\n{param_text}", color="black")
@@ -96,7 +96,7 @@ ax3.set_title("Tiempo vs Decaiminetos por bin")
 
 ax3.grid(True)
 
-ax3.legend(loc="upper right", fontsize=9)
+ax3.legend(loc="upper right", fontsize=11)
 
 ax4.scatter(y, residuales_1, color='g', marker='x')
 ax4.axhline(0, color='gray', linestyle='--')  
@@ -113,7 +113,7 @@ ax5.set_ylabel("Eventos\npor bin", color='r')
 
 ax5.grid(True)
 
-ax5.legend(loc="upper right", fontsize=9)
+ax5.legend(loc="upper right", fontsize=11)
 
 ax6.scatter(y, residuales_2, color='g', marker='x')
 ax6.axhline(0, color='gray', linestyle='--')  
