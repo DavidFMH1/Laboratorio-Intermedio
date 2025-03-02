@@ -59,7 +59,7 @@ res = y - yp
 
 normres = res / np.std(res)
 
-fig, axs1 = plt.subplots(2, 1, figsize=(8, 10), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
+fig, axs1 = plt.subplots(2, 1, figsize=(15,7.5), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
 
 axs1[0].scatter(x, y, label="Datos", color='blue')
 axs1[0].plot(_x, _y, label=f"Ajuste lineal: y = {param1a[0]:.3f}" + r"$\pm$" f"{np.sqrt(np.diagonal(cov1a))[0]:.3f}x", color='red')
@@ -102,7 +102,7 @@ res2 = periodo2 - ypre2
 
 normres2 = res2 / np.std(res2)
 
-fig, axs2 = plt.subplots(2, 1, figsize=(8, 10), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
+fig, axs2 = plt.subplots(2, 1, figsize=(15,7.5), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
 
 axs2[0].scatter(nmasas, periodo2, label="Datos", color='blue')
 axs2[0].plot(_x2, _y2, label=f"Ajuste lineal: y = {param2[0]:.4f}x + {param2[1]:.4f}\n m "+r"$\pm$"+f"{deviation2[0]:.4f}\n b "+r"$\pm$"+f" {deviation2[1]:.4f}", color='red')
@@ -143,7 +143,7 @@ res3 = Dp - ypre3
 
 normres3 = res3 / np.std(res3)
 
-fig, axs3 = plt.subplots(2, 1, figsize=(8, 10), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
+fig, axs3 = plt.subplots(2, 1, figsize=(15,7.5), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
 
 axs3[0].scatter(I, Dp, label="Datos", color='blue')
 axs3[0].plot(_x3, _y3, label=f"Ajuste lineal: y = {param3[0]:.3f}x + {param3[1]:.3f}\n m "+r"$\pm$"+f" {deviation3[0]:.3f}\n b "+r"$\pm$"+f" {deviation3[1]:.3f}", color='red')
@@ -205,7 +205,7 @@ normres4a = res4a / np.std(res4a)
 normres4b = res4b / np.std(res4b)
 normres4c = res4c / np.std(res4c)
 
-fig, axs4 = plt.subplots(2, 1, figsize=(8, 10), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
+fig, axs4 = plt.subplots(2, 1, figsize=(15,7.5), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
 
 axs4[0].scatter(t1, V1, color='blue', marker='s')
 axs4[0].scatter(t2, V2, color='g', marker='^')
@@ -263,7 +263,7 @@ res5b = ampl2 - ypre5b
 normres5a = res5a / np.std(res5a)
 normres5b = res5b / np.std(res5b)
 
-fig, axs5 = plt.subplots(2, 1, figsize=(8, 10), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
+fig, axs5 = plt.subplots(2, 1, figsize=(15,7.5), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
 
 axs5[0].scatter(frecu1, ampl1, label="Datos 1", color='blue', marker='s')
 axs5[0].scatter(frecu2, ampl2, label='Datos 2', color='g', marker='^')
