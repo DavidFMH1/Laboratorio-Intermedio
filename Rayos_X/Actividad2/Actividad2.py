@@ -18,6 +18,10 @@ def read_data(path, Names, skip_rows=3, num_data=0, BName = NameB):
         lines = islice(fileb, skip_rows, None)
         DataB = [list(map(float,line.replace(',', '.').split())) for line in lines]
     
+    j = 0
+    
+    sigI = np.array([])
+    
     for name in Names:
         CPath = path + name
         with open(CPath, 'r') as file:
@@ -26,13 +30,26 @@ def read_data(path, Names, skip_rows=3, num_data=0, BName = NameB):
             
             DataA.append(Data[num_data])
             
-            DataA[num_data][1] = DataA[num_data][1] / DataB[num_data][1]
+            DataA[j][1] = DataA[j][1] / DataB[num_data][1]
             
-    return DataA
+            sigI = np.append(sigI, np.sqrt((1/DataB[num_data][1])**2 + (DataA[j][1]/DataB[num_data][1])**2))
+            
+        j+=1
+    
+    return DataA, sigI
 
-DataA45 = read_data(PPath,NamesA)
+i = 0
 
-y = [i[1] for i in DataA45]
+fig, axs = plt.subplots(2, 1, gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
 
-plt.scatter(thiknA,y)
+while i < len(NamesA):
+    
+    data, sigy = read_data(PPath,NamesA,num_data=i)
+    
+    y = [i[1] for i in data]
+    x = thiknA
+    axs[0].errorbar(x,y,yerr=sigy, fmt='None')
+    
+    i += 1
+    
 plt.show()
