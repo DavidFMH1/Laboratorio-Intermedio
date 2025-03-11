@@ -33,7 +33,7 @@ xl = [i[0] for i in data if 41.6 <= i[0] <= 42.2]
 xn = [2*d*np.sin(np.radians(k)) for k in xv]
 xnl = [2*d*np.sin(np.radians(k)) for k in xl]
 
-y = [i[1] for i in data if 41.7 <= i[0] <= 42.1]
+y = [i[1] for i in data if 41.7 <= i[0] <= 42.1 ]
 yl = [i[1] for i in data if 41.6 <= i[0] <= 42.2]
 
 xerr = np.full(len(xv),0.1)
