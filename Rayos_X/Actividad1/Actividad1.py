@@ -58,8 +58,8 @@ y_ = lorentzian(x_, param[0], param[1], param[2])
 #Voigt profile
 
 guessv = [max(y),2.68e-10,(max(xn)-min(xn))/10,(max(xn)-min(xn))/20]
-guessv2 = [param[0], param[1], 1, param[2]]
-guessv3 = [max(y),2.68e-10,(max(xn)-min(xn)),(max(xn)-min(xn))/20]
+guessv2 = [param[0], param[1], 1, param[2]*20]
+guessv3 = [1,2.68e-10, (max(xn)-min(xn)),(max(xn)-min(xn))]
 
 paramv, covv = curve_fit(voigt_profile,xn,y,p0=guessv2, sigma=yerr, absolute_sigma=True)
 
