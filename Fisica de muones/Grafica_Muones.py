@@ -7,13 +7,13 @@ from scipy.optimize import curve_fit
 archivo = "Fisica de muones\\25-01-31-19-36.data"
 archivo2 = "Fisica de muones\\25-02-07-18-03.data"
 
-def exponentialfit(x, A, T):
-    return A * np.exp(-x / T)  
+def exponentialfit(x, A, T, B):
+    return A * np.exp(-x / T) + B
 
 def read_data(path):
     with open(path, 'r') as file:
-        data1, data2 = [float(line.split(',')[0]) for line in file] , [float(line.split(',')[1]) for line in file]
-    return data1, data2
+        data1 = [float(line.split()[0]) for line in file]
+    return data1
   
 datos = read_data(archivo)
 datos2 = read_data(archivo2)
@@ -44,21 +44,21 @@ error_x = np.full(num_bins, (bins[1] - bins[0]) / 2)
 
 mask = conteo_por_bin > 0
 mask2 = conteo_por_bin2 > 0
-guess = [10, 2000]
+guess = [10, 2000, 1]
 param, cov = curve_fit(exponentialfit, y[mask], conteo_por_bin[mask], p0=guess)
 param2 , cov2 = curve_fit(exponentialfit,y[mask2], conteo_por_bin2[mask2], p0=guess)
 
 cov1 = np.sqrt(np.diagonal(cov))/1000
 cov_2 = np.sqrt(np.diagonal(cov2))/1000
 
-residuales_1 = (conteo_por_bin - exponentialfit(y, param[0], param[1])) / np.sqrt(conteo_por_bin)
-residuales_2 = (conteo_por_bin2 - exponentialfit(y, param2[0], param2[1])) / np.sqrt(conteo_por_bin2)
+residuales_1 = (conteo_por_bin - exponentialfit(y,*param)) / np.sqrt(conteo_por_bin)
+residuales_2 = (conteo_por_bin2 - exponentialfit(y, *param2)) / np.sqrt(conteo_por_bin2)
 
 print(param, cov)
 
 x_ = np.linspace(0, 20000, 100)
-y_ = exponentialfit(x_, param[0], param[1])
-y_2 = exponentialfit(x_, param2[0], param2[1])
+y_ = exponentialfit(x_, *param)
+y_2 = exponentialfit(x_, *param2)
 
 fig = plt.figure(figsize=(15,7.5))
 gs = grd.GridSpec(5, 3, height_ratios=[1, 0.5, 0.2, 1, 0.5], width_ratios=[1, 0.001, 1.8], hspace=0, wspace=0.2)
