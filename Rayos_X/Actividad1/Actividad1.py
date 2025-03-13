@@ -27,14 +27,14 @@ data = read_data(path)
 
 #Este x es en angulo
 xv = [i[0] for i in data if 41.7 <= i[0] <= 42.1]
-xl = [i[0] for i in data if 41.6 <= i[0] <= 42.2]
+xl = [i[0] for i in data if 41.5 <= i[0] <= 42.2]
 
 #Nuevo x en longitud de onda
 xn = [2*d*np.sin(np.radians(k)) for k in xv]
 xnl = [2*d*np.sin(np.radians(k)) for k in xl]
 
 y = [i[1] for i in data if 41.7 <= i[0] <= 42.1 ]
-yl = [i[1] for i in data if 41.6 <= i[0] <= 42.2]
+yl = [i[1] for i in data if 41.5 <= i[0] <= 42.2]
 
 xerr = np.full(len(xv),0.1)
 
@@ -68,13 +68,11 @@ covvn = np.sqrt(np.diagonal(covv))
 xv_ = np.linspace(xn[0]-xerrn[0],xn[-1]+xerrn[-1],200)
 yv_ = voigt_profile(x_,*paramv)
 
+print(param[1])
 
-fig, axs = plt.subplots(2, 3, figsize=(15,7.5), gridspec_kw={'height_ratios': [3, 1], 'width_ratios': [1,0.001,1], 'hspace': 0, 'wspace': 0.15})
+fig, axs = plt.subplots(2, 1, figsize=(15,7.5), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0, 'wspace': 0.15})
 
 fig.suptitle('Intensidad vs Longitud de onda', fontsize=20)
-
-axs[0,1].axis('off')
-axs[1,1].axis('off')
 
 #axs[0,2].scatter(xn,y)
 
@@ -87,28 +85,28 @@ exponente = np.floor(np.log10(x0))  # Encuentra el exponente más grande
 x0_mant = x0 / 10**exponente
 error_mant = error / 10**exponente
 
-axs[0, 0].errorbar(xnl, yl, xerr=xerrnl, yerr=yerrl, fmt='o', label='Pico #4', capsize=3)
-axs[0, 0].axvline(param[1],color='g', linestyle='--', label=f"$x_0 = ({x0_mant:.5f} \\pm {error_mant:.5f}) \\times 10^{{{int(exponente)}}}$")
-axs[0, 0].yaxis.set_major_formatter(ti.ScalarFormatter(useMathText=True))
-axs[0, 0].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
-axs[0, 0].yaxis.get_offset_text().set_fontsize(8) 
-axs[0, 0].plot(x_, y_, label='Ajuste Lonrentziano', color='red')
-axs[0, 0].set_ylabel('Intensidad (imp/s)')
-axs[0, 0].legend(fontsize=8)
+axs[0].errorbar(xnl, yl, xerr=xerrnl, yerr=yerrl, fmt='o', label='Pico #3', capsize=3)
+axs[0].axvline(param[1],color='g', linestyle='--', label=f"$x_0 = ({x0_mant:.5f} \\pm {error_mant:.5f}) \\times 10^{{{int(exponente)}}}$")
+axs[0].yaxis.set_major_formatter(ti.ScalarFormatter(useMathText=True))
+axs[0].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
+axs[0].yaxis.get_offset_text().set_fontsize(8) 
+axs[0].plot(x_, y_, label='Ajuste Lonrentziano', color='red')
+axs[0].set_ylabel('Intensidad (imp/s)')
+axs[0].legend(fontsize=8)
 
 res = yl - lorentzian(xnl,*param) / yerrl
 
-axs[1, 0].scatter(xnl, res, color='black', marker='x')
-axs[1, 0].axhline(0, color='black', linestyle='--')
-axs[1, 0].yaxis.set_major_formatter(ti.ScalarFormatter(useMathText=True))
-axs[1, 0].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
-axs[1, 0].yaxis.get_offset_text().set_fontsize(8)
-axs[1, 0].set_xlabel('Longitud de onda (m)')
-axs[1, 0].set_ylabel('Residuales\n normalizados')
+axs[1].scatter(xnl, res, color='black', marker='x')
+axs[1].axhline(0, color='black', linestyle='--')
+axs[1].yaxis.set_major_formatter(ti.ScalarFormatter(useMathText=True))
+axs[1].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
+axs[1].yaxis.get_offset_text().set_fontsize(8)
+axs[1].set_xlabel('Longitud de onda (m)')
+axs[1].set_ylabel('Residuales\n normalizados')
 
 #Perfil de Voigt
 
-x0v = paramv[1]
+'''x0v = paramv[1]
 errorv = covvn[1]
 
 exponentev = np.floor(np.log10(x0v)) 
@@ -134,12 +132,9 @@ axs[1, 2].yaxis.set_major_formatter(ti.ScalarFormatter(useMathText=True))
 axs[1, 2].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
 axs[1, 2].yaxis.get_offset_text().set_fontsize(8) 
 axs[1, 2].set_xlabel('Longitud de onda (m)')
-axs[1, 2].set_ylabel('Residuales\n normalizados')
+axs[1, 2].set_ylabel('Residuales\n normalizados')'''
 
 for row in axs:
-    for ax in row:
-        ax.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
+    row.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
 
-plt.show()
-
-'''plt.savefig(r'Rayos_X\\Actividad1\\GraficaAv1pic4.png', format='png', dpi=300)'''
+plt.savefig(r'Rayos_X\\Actividad1\\GraficaAv1pic3.png', format='png', dpi=300)

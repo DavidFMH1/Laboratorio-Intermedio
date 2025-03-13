@@ -15,6 +15,12 @@ marcadores = np.array(['o', 's', 'D', '^', 'v', '<', '>', 'p', '*', 'X'])
 def lorentzian(x,A,x0,gamma):
     return A / (1 + ((x-x0)/gamma)**2)
 
+def lineal_reg(x,a):
+    return a*x
+
+def weird_reg(x,A):
+    return A*(x-pk)**(3/2)
+
 def read_dataTc(path):
     
     with open(path, 'r') as file:
@@ -96,21 +102,60 @@ fig, axs = plt.subplots(2, 2, figsize=(15, 10), gridspec_kw={'height_ratios': [3
 Urarob = np.power((potencialb - pk), 3/2)
 Uraroa = np.power((potenciala - pk), 3/2)
 
+param1, cov1 = curve_fit(weird_reg, potenciala, IKa, sigma= sigIka, absolute_sigma=True)
+param2, cov2 = curve_fit(weird_reg, potencialb, IKb, sigma= sigIkb, absolute_sigma=True)
+param3, cov3 = curve_fit(lineal_reg, Uraroa, IKa, sigma= sigIka, absolute_sigma=True)
+param4, cov4 = curve_fit(lineal_reg, Urarob, IKb, sigma= sigIkb, absolute_sigma=True)
+
+_x1 = np.linspace(np.min(potenciala), np.max(potenciala), 200)
+_x2 = np.linspace(np.min(potencialb), np.max(potencialb), 200)
+_x3 = np.linspace(np.min(Uraroa), np.max(Uraroa), 200)
+_x4 = np.linspace(np.min(Urarob), np.max(Urarob), 200)
+
+_y1 = weird_reg(_x1,*param1)
+_y2 = weird_reg(_x2,*param2)
+_y3 = lineal_reg(_x3,*param3)
+_y4 = lineal_reg(_x4,*param4)
+
+res1 = (IKa - weird_reg(potenciala,param1[0]))
+res2 = (IKb - weird_reg(potencialb,param2[0]))
+res3 = (IKa - lineal_reg(Uraroa,param3[0]))
+res4 = (IKb - lineal_reg(Urarob,param4[0]))
+
 axs[0, 0].errorbar(potencialb, IKb, yerr=sigIkb, fmt='o', label=r'$K_{\beta} \quad en \quad función \quad de \quad U_{K}$')
+axs[0, 0].plot(_x2,_y2, color='red')
 axs[0, 0].errorbar(potenciala, IKa, yerr=sigIka, fmt='o', label=r'$K_{\alpha} \quad en \quad función \quad de \quad U_{K}$')
+axs[0, 0].plot(_x1,_y1, color='red')
 
 axs[0, 0].set_ylabel('K (m)')
 axs[0, 0].set_title(r'Gráfico en función de $U_K$')
 axs[0, 0].legend(fontsize=12)
 axs[0, 0].grid()
 
-axs[0, 1].errorbar(Urarob, IKb, yerr=sigIkb, fmt='o', label=r'$K_{\beta} \quad en \quad función \quad de \quad (U_{A} - U_{K})^{\frac{3}{2}}$')
-axs[0, 1].errorbar(Uraroa, IKa, yerr=sigIkb, fmt='o', label=r'$K_{\alpha} \quad en \quad función \quad de \quad (U_{A} - U_{K})^{\frac{3}{2}}$')
+axs[0, 1].errorbar(Urarob, IKb, yerr=100*sigIkb, ecolor=colores[1], fmt='None', label=r'$K_{\beta} \quad en \quad función \quad de \quad (U_{A} - U_{K})^{\frac{3}{2}}$', capsize=10e10, capthick=0)
+axs[0, 1].plot(_x4,_y4, color='black')
+axs[0, 1].errorbar(Uraroa, IKa, yerr=100*sigIkb, ecolor=colores[2], fmt='None', label=r'$K_{\alpha} \quad en \quad función \quad de \quad (U_{A} - U_{K})^{\frac{3}{2}}$', capsize=10, capthick = 0)
+axs[0, 1].plot(_x3,_y3, color='black')
 
 axs[0, 1].set_title(r'Gráfico en función de $(U_A - U_K)^{3/2}$')
 axs[0, 1].legend(fontsize=12)
 axs[0, 1].grid()
 
+axs[1, 0].scatter(potencialb, res2, label=r'Residuales $K_{\beta}$')
+axs[1, 0].scatter(potenciala, res1, label=r'Residuales $K_{\alpha}$')
+axs[1, 0].axhline(0, color='black', linestyle='--', linewidth=1)
+axs[1, 0].set_xlabel('Potencial (mA)')
+axs[1, 0].set_ylabel('Residuales\nnormalizados')
+axs[1, 0].legend()
+axs[1, 0].grid()
+
+axs[1, 1].scatter(Urarob, res4, label=r'Residuales $K_{\beta}$')
+axs[1, 1].scatter(Uraroa, res3, label=r'Residuales $K_{\alpha}$')
+axs[1, 1].axhline(0, color='black', linestyle='--', linewidth=1)
+axs[1, 1].set_xlabel(r'$(U_A - U_K)^{3/2}$')
+axs[1, 1].set_ylabel('Residuales\nnormalizados')
+axs[1, 1].legend()
+axs[1, 1].grid()
 
 plt.show()
 

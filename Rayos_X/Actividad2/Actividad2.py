@@ -225,4 +225,7 @@ axs[1].set_ylabel('Residuales\n normalizados')
 
 axs[1].legend()
 
+for ax in axs:
+    ax.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
+
 '''plt.savefig(r'Rayos_X\\Actividad2\\coeficientedeatenuacni.png', format='png', dpi=300)'''
