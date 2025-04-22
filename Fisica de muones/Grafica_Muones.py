@@ -12,7 +12,7 @@ def exponentialfit(x, A, T, B):
 
 def read_data(path):
     with open(path, 'r') as file:
-        data1 = [float(line.split()[0]) for line in file]
+        data1 = [float(line.split()) for line in file]
     return data1
   
 datos = read_data(archivo)
