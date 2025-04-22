@@ -141,14 +141,14 @@ lambsZn = np.array([])
 muZn = np.array([])
 sigmuZn = np.array([])
 
-for i in Datos1:
+for i in Datos2:
     
     lamb = 2*d*np.sin(np.radians(float(i)))*(10**9)
     lambsZn = np.append(lambsZn,float(lamb))
     lamb = format_number(lamb, 4)
     
-    x = [Datos1[i][k][0] for k in range(len(Datos1[i]))]
-    y = [np.log(Datos1[i][k][1]) for k in range(len(Datos1[i]))]
+    x = [Datos2[i][k][0] for k in range(len(Datos2[i]))]
+    y = [np.log(Datos2[i][k][1]) for k in range(len(Datos2[i]))]
     
     param, cov = curve_fit(Lineal_reg, x, y)
     
@@ -190,19 +190,22 @@ muZnY = (muZn/Zndens)*10
 lambAlX = lambsAl**3
 lambZnX = lambsZn**3
 
-sigmuAlN = (1/Aldens)*sigmuAl
-sigmuZnN = (1/Zndens)*sigmuZn
+sigmuAlN = (1/Aldens)*sigmuAl*10
+sigmuZnN = (1/Zndens)*sigmuZn*10
 
 fig, axs = plt.subplots(2, 1, figsize=(15,7.5), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
 
 fig.suptitle('Coeficiente de absorción lineal vs longitud de onda')
 
-axs[0].errorbar(lambAlX,muAlY, yerr = sigmuAl, fmt='o', label='Datos Al', capsize = 3)
-axs[0].errorbar(lambZnX,muZnY, yerr = sigmuZn, fmt='o', label='Datos Zn', capsize = 3)
+axs[0].errorbar(lambAlX,muAlY, yerr = sigmuAlN, fmt='o', label='Datos Al', capsize = 3)
+axs[0].errorbar(lambZnX,muZnY, yerr = sigmuZnN, fmt='o', label='Datos Zn', capsize = 3)
 axs[0].set_ylabel(r"$\frac{\mu}{\rho} \quad \frac{\mathrm{cm}^{2}}{\mathrm{g}}$")
 
-param, cov  = curve_fit(cub_reg, lambAlX, muAlY, sigma=sigmuAlN, absolute_sigma=True)
-param2, cov2 = curve_fit(cub_reg, lambZnX, muZnY, sigma=sigmuZnN, absolute_sigma=True)
+guess1 = [5.12e10,-1.13e5,37]
+guess2 =[5.12e-6,-1.1912e-1,3.01e1,30]
+
+param, cov  = curve_fit(cub_reg, lambAlX, muAlY, p0=guess2)
+param2, cov2 = curve_fit(cub_reg, lambZnX, muZnY, p0=guess2)
 
 _x = np.linspace(np.min(lambAlX), np.max(lambAlX),200)
 _y = cub_reg(_x,*param)
@@ -228,4 +231,4 @@ axs[1].legend()
 for ax in axs:
     ax.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
 
-'''plt.savefig(r'Rayos_X\\Actividad2\\coeficientedeatenuacni.png', format='png', dpi=300)'''
+plt.savefig(r'Rayos_X\\Actividad2\\coeficientedeatenuacni.png', format='png', dpi=300)

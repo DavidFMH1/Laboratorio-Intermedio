@@ -15,8 +15,8 @@ marcadores = np.array(['o', 's', 'D', '^', 'v', '<', '>', 'p', '*', 'X'])
 def lorentzian(x,A,x0,gamma):
     return A / (1 + ((x-x0)/gamma)**2)
 
-def lineal_reg(x,a):
-    return a*x
+def lineal_reg(x,a,b):
+    return a*x +b
 
 def weird_reg(x,A):
     return A*(x-pk)**(3/2)
@@ -62,8 +62,11 @@ for i in range(1,11):
     plt.errorbar(lamb,j,yerr=sigmi, xerr=siglam, fmt='o', color=colores[i-1], label=f'{k+2.5*(i-1)} V')
     plt.plot(_x, _y, color=colores[i-1])
 
+
+plt.ylabel('Intensidad (imps/s)')
+plt.xlabel('Longitud de onda (m)')
 plt.legend(fontsize=10)
-plt.close()
+'''plt.savefig(r'Rayos_X\\Actividad3\\grafcorrcte.png', format='png', dpi=300)'''
 
 IKa = np.array([])
 sigIka = np.array([])
@@ -94,7 +97,13 @@ for i in range(1,11):
     plt.plot(_x, _y, color=colores[i-1])
     
 plt.legend(fontsize=10)
+plt.ylabel('Intensidad (imps/s)')
+plt.xlabel('Longitud de onda (m)')
+plt.grid()
+
 plt.close()
+
+'''plt.savefig(r'Rayos_X\\Actividad3\\grafcorrcte.png', format='png', dpi=300)'''
 
 
 fig, axs = plt.subplots(2, 2, figsize=(15, 10), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0})
@@ -102,30 +111,37 @@ fig, axs = plt.subplots(2, 2, figsize=(15, 10), gridspec_kw={'height_ratios': [3
 Urarob = np.power((potencialb - pk), 3/2)
 Uraroa = np.power((potenciala - pk), 3/2)
 
-param1, cov1 = curve_fit(weird_reg, potenciala, IKa, sigma= sigIka, absolute_sigma=True)
-param2, cov2 = curve_fit(weird_reg, potencialb, IKb, sigma= sigIkb, absolute_sigma=True)
+param1, cov1 = curve_fit(lineal_reg, potenciala, IKa, sigma= sigIka, absolute_sigma=True)
+param2, cov2 = curve_fit(lineal_reg, potencialb, IKb, sigma= sigIkb, absolute_sigma=True)
 param3, cov3 = curve_fit(lineal_reg, Uraroa, IKa, sigma= sigIka, absolute_sigma=True)
 param4, cov4 = curve_fit(lineal_reg, Urarob, IKb, sigma= sigIkb, absolute_sigma=True)
+
+covn3 = np.sqrt(np.diagonal(cov3))
+covn4 = np.sqrt(np.diagonal(cov4))
 
 _x1 = np.linspace(np.min(potenciala), np.max(potenciala), 200)
 _x2 = np.linspace(np.min(potencialb), np.max(potencialb), 200)
 _x3 = np.linspace(np.min(Uraroa), np.max(Uraroa), 200)
 _x4 = np.linspace(np.min(Urarob), np.max(Urarob), 200)
 
-_y1 = weird_reg(_x1,*param1)
-_y2 = weird_reg(_x2,*param2)
+print(param3, param4)
+print(covn3, covn4  )
+
+
+_y1 = lineal_reg(_x1,*param1)
+_y2 = lineal_reg(_x2,*param2)
 _y3 = lineal_reg(_x3,*param3)
 _y4 = lineal_reg(_x4,*param4)
 
-res1 = (IKa - weird_reg(potenciala,param1[0]))
-res2 = (IKb - weird_reg(potencialb,param2[0]))
-res3 = (IKa - lineal_reg(Uraroa,param3[0]))
-res4 = (IKb - lineal_reg(Urarob,param4[0]))
+res1 = (IKa - lineal_reg(potenciala,*param1))/sigIka
+res2 = (IKb - lineal_reg(potencialb,*param2))/sigIkb
+res3 = (IKa - lineal_reg(Uraroa,*param3))/sigIka
+res4 = (IKb - lineal_reg(Urarob,*param4))/sigIkb
 
-axs[0, 0].errorbar(potencialb, IKb, yerr=sigIkb, fmt='o', label=r'$K_{\beta} \quad en \quad función \quad de \quad U_{K}$')
-axs[0, 0].plot(_x2,_y2, color='red')
-axs[0, 0].errorbar(potenciala, IKa, yerr=sigIka, fmt='o', label=r'$K_{\alpha} \quad en \quad función \quad de \quad U_{K}$')
-axs[0, 0].plot(_x1,_y1, color='red')
+axs[0, 0].errorbar(potencialb, IKb, yerr=sigIkb*100, ecolor=colores[1], fmt='None', label=r'$K_{\beta} \quad en \quad función \quad de \quad U_{K}$', capsize=10, capthick = 0)
+axs[0, 0].plot(_x2,_y2, color='black')
+axs[0, 0].errorbar(potenciala, IKa, yerr=sigIka*100, ecolor=colores[2], fmt='None', label=r'$K_{\alpha} \quad en \quad función \quad de \quad U_{K}$', capsize=10, capthick = 0)
+axs[0, 0].plot(_x1,_y1, color='black')
 
 axs[0, 0].set_ylabel('K (m)')
 axs[0, 0].set_title(r'Gráfico en función de $U_K$')
@@ -141,23 +157,23 @@ axs[0, 1].set_title(r'Gráfico en función de $(U_A - U_K)^{3/2}$')
 axs[0, 1].legend(fontsize=12)
 axs[0, 1].grid()
 
-axs[1, 0].scatter(potencialb, res2, label=r'Residuales $K_{\beta}$')
-axs[1, 0].scatter(potenciala, res1, label=r'Residuales $K_{\alpha}$')
+axs[1, 0].scatter(potencialb, res2, marker='x', label=r'Residuales $K_{\beta}$')
+axs[1, 0].scatter(potenciala, res1, marker='x', label=r'Residuales $K_{\alpha}$')
 axs[1, 0].axhline(0, color='black', linestyle='--', linewidth=1)
 axs[1, 0].set_xlabel('Potencial (mA)')
 axs[1, 0].set_ylabel('Residuales\nnormalizados')
-axs[1, 0].legend()
+axs[1, 0].legend(fontsize=9)
 axs[1, 0].grid()
 
-axs[1, 1].scatter(Urarob, res4, label=r'Residuales $K_{\beta}$')
-axs[1, 1].scatter(Uraroa, res3, label=r'Residuales $K_{\alpha}$')
+axs[1, 1].scatter(Urarob, res4, marker='x', label=r'Residuales $K_{\beta}$')
+axs[1, 1].scatter(Uraroa, res3, marker='x', label=r'Residuales $K_{\alpha}$')
 axs[1, 1].axhline(0, color='black', linestyle='--', linewidth=1)
 axs[1, 1].set_xlabel(r'$(U_A - U_K)^{3/2}$')
 axs[1, 1].set_ylabel('Residuales\nnormalizados')
-axs[1, 1].legend()
+axs[1, 1].legend(fontsize=9)
 axs[1, 1].grid()
 
-plt.show()
+plt.savefig(r'Rayos_X\\Actividad3\\compartionbetwlinealreg.png', format='png', dpi=300)
 
 '''plt.figure(figsize=(15,7.5))
 plt.suptitle('Intensidad vs Longitud de onda, con tension cte')
@@ -199,8 +215,6 @@ for i in range(1,11):
     
     #print(f'valor de corriente {k+0.1*(i-1):.1f} ma, x0 = {param[1]:.5}' + r'$\pm$' + f'{cov[1]:.5}')
 
-plt.close()
-
 corrientea = np.array([])
 x0a = np.array([])
 xoasig = np.array([])
@@ -237,6 +251,9 @@ for i in range(1,11):
     xoasig = np.append(xoasig, cov[1])
 
 plt.legend(fontsize=10)
+plt.ylabel('Intensidad (imps/s)')
+plt.xlabel('Longitud de onda (m)')
+plt.grid()
 plt.close()
 
 plt.figure(figsize=(15,7.5))
@@ -249,5 +266,7 @@ plt.ylabel('K (m)')
 plt.xlabel('Corriente (mA)')
 plt.grid()
 plt.legend(fontsize=15)'''
+
+'''plt.savefig(r'Rayos_X\\Actividad3\\graftencte.png', format='png', dpi=300)'''
 
 '''plt.savefig(r'Rayos_X\\Actividad3\\GraficaKvsIVcte.png', format='png', dpi=300)'''
