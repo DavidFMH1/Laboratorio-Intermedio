@@ -4,7 +4,7 @@ import csv
 
 from scipy.optimize import curve_fit
 
-path = 'Torque_magnetico\\Actividad1\\actividad_1.csv'
+path = 'Torque_magnetico\\Actividad3\\Actividad3.csv'
 
 def Weighted_least_squares(x,y,dy):
     
@@ -47,43 +47,22 @@ def read_data(path):
 def convert_curr_to_Mfield(currlist):
     return 1.36e-3*currlist
 
-Rad, Curr = read_data(path)
-MField = convert_curr_to_Mfield(Curr)
+curr, freq = read_data(path)
 
-Rm = Rad/100
-
-rmg = Rm*0.0015*9.78
-
-sigrmg = np.sqrt(5.38e-13+(Rm*0.0015*0.0001)**2)
-sigB = np.full(len(MField),6.8e-5)
-
-c, sc, m, sm = Weighted_least_squares(MField,rmg,sigrmg)
-
-_x = np.linspace(np.min(MField)-6.8e-5,np.max(MField)+6.8e-5,2)
-_y = linealfunc(_x,m,c)
-
-#residuales
-
-res = (rmg-linealfunc(MField,m,c))/(sigrmg*20)
+mfield = convert_curr_to_Mfield(curr)
 
 fig, axs = plt.subplots(2, 1, figsize=(7,5.5), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0, 'wspace': 0.15})
 
 fig.suptitle('Torque mecánico en función del campo magnético', fontsize=12)
 
-mt = fr'$m = {m:.4f} \pm {sm:.4f}$'
-ct = fr'$b = ({c*10e5:.0f} \pm {sc*10e5:.0f})\times 10^{{-5}}$'
-
-axs[0].errorbar(MField*1000, rmg*1000, yerr=20000*sigrmg, xerr=sigB*1000, fmt='o', label='Datos',color='black', capsize=3, elinewidth=1.5, markersize=6)
-axs[0].plot(_x*1000,_y*1000,color='red', label=f'Regresión Lineal \n {mt} \n {ct}')
-axs[0].set_ylabel(r'Rmg $10^{-3} (Nm)$', fontsize =14)
-axs[0].legend()
-
-axs[1].scatter(MField*1000, res, color='black', marker='x')
-axs[1].axhline(0, color='black', linestyle='--')
-axs[1].set_ylabel('Residuales\n normalizados', fontsize = 12)
-axs[1].set_xlabel('B (mT)', fontsize=12)
+axs[0].errorbar(mfield, freq, fmt='o', label='Datos',color='blue', capsize=5, elinewidth=1.5, markersize=6)
+axs[0].plot([mfield[-1],mfield[-1]],[0,freq[-1]*2],'--',color='red', linewidth=1.5)
+axs[0].scatter(mfield[-1],2*freq[-1],marker='x',color='red')
+axs[0].plot([mfield[-2],mfield[-2]],[0,freq[-2]*2],'--',color='red', linewidth=1.5)
+axs[0].scatter(mfield[-2],2*freq[-2],marker='x',color='red')
+'''axs[0].plot(_x,_y,color='red')'''
 
 for row in axs:
     row.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
 
-plt.savefig(r'Torque_magnetico\\Actividad1\\rmgvscampomagnetic.png', format='png', dpi=300)
+plt.show()
