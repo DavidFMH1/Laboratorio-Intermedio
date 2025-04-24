@@ -64,7 +64,7 @@ sigper2 = 2*(per/5)*0.02
 c, sigc, m, sigm = Weighted_least_squares(per2, MfieldN, sigBn) 
 
 mu = m/NF
-sigmu = np.sqrt((8*(np.pi**2)*(R**2)*m*sM)**2 + (16*(np.pi**2)*R*m*sR)**2 + (8*(np.pi**2)*(R**2)*M*sigm)**2)
+sigmu = np.sqrt(((8/5)*(np.pi**2)*(R**2)*m*sM)**2 + ((16/5)*(np.pi**2)*R*m*sR)**2 + ((8/5)*(np.pi**2)*(R**2)*M*sigm)**2)
 
 print(f'De esta actividad se puede deducir un valor de mu {mu:.2f} mas o menos {sigmu:.2f}')
 
