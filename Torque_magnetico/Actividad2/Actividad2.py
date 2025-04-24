@@ -6,7 +6,10 @@ from scipy.optimize import curve_fit
 
 path = 'Torque_magnetico\\Actividad2\\Actividad2.csv'
 
-R, M= 2.6875, 141.3
+R, M= 2.6875/100, 141.3/1000
+sR, sM = 0.00005, 0.0001
+
+NF = (5/(8*((np.pi)**2)*(R**2)*M))
 
 def Weighted_least_squares(x,y,dy):
     
@@ -58,7 +61,10 @@ per2 = (per/5)**2
 sigBn = (1/Mfield**2)*6.8e-5
 
 c, sigc, m, sigm = Weighted_least_squares(per2, MfieldN, sigBn) 
-print(m)
+
+mu = m/NF
+sigmu = np.sqrt((8*(np.pi**2)*(R**2)*m*sM)**2 + (16*(np.pi**2)*R*m*sR)**2 + (8*(np.pi**2)*(R**2)*M*sigm)**2)
+print(mu,sigmu)
 
 _x = np.linspace(np.min(per2),(np.max(per2)))
 _y = linealfunc(_x,m,c)
@@ -73,4 +79,4 @@ axs[0].plot(_x,_y,color='red')
 for row in axs:
     row.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
 
-'''plt.show()'''
+plt.show()
