@@ -79,7 +79,7 @@ res = (tfreq - linealfunc(mfield,m,c))/sigfreq
 
 fig, axs = plt.subplots(2, 1, figsize=(7,5.5), gridspec_kw={'height_ratios': [3, 1], 'hspace': 0, 'wspace': 0.15})
 
-mt = fr'$m = {m:.1f} \pm {sm:.1f}$'
+mt = fr'$m = {m:.0f} \pm {sm:.0f}$'
 ct = fr'$b = {c:.3f} \pm {sc:.3f}$'
 
 
