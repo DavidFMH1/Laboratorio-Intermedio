@@ -4,6 +4,7 @@ import csv
 
 from itertools import islice
 from scipy.optimize import curve_fit
+from scipy.signal import find_peaks
 
 Spath = 'Franck-Hertz\\Actividad1\\Datos\\T_constante175'
 
@@ -19,8 +20,13 @@ for i in range(2,6):
     Path = Spath + f'({i})'
     x, y = read_data(Path)
     xfil, yfil = zip(*[(xi, yi) for xi,yi in zip(x,y) if xi < 46])
-    xfil, yfil = list(xfil), list(yfil)
-    plt.scatter(xfil,yfil, label=f'Datos {i}',s = 5)
+    xfil, yfil = np.array(list(xfil)), np.array(list(yfil))
+    mind, _ = find_peaks(-yfil, distance=10, prominence=0.18)
+    mind = np.array(mind)
+    mins = xfil[mind]
+    for min in mins:
+        plt.axvline(x=min, color='black', linestyle='--', linewidth=1)
+    plt.scatter(xfil,yfil, label=f'Datos {i-1}',s = 5)
 
 
 plt.ylabel('')
