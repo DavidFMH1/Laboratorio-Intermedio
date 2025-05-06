@@ -5,6 +5,7 @@ import csv
 from itertools import islice
 from scipy.optimize import curve_fit
 from scipy.signal import find_peaks
+from matplotlib.lines import Line2D
 
 Spath = 'Franck-Hertz\\Actividad1\\Datos\\T_constante175'
 
@@ -16,6 +17,10 @@ def read_data(path, skip_rows = 3):
     col1, col2 = zip(*data)
     return list(col1), list(col2)
 
+plt.figure(figsize=(7,5.5))
+
+han = []
+
 for i in range(2,6):
     Path = Spath + f'({i})'
     x, y = read_data(Path)
@@ -25,11 +30,18 @@ for i in range(2,6):
     mind = np.array(mind)
     mins = xfil[mind]
     for min in mins:
-        plt.axvline(x=min, color='black', linestyle='--', linewidth=1)
-    plt.scatter(xfil,yfil, label=f'Datos {i-1}',s = 5)
+        plt.vlines(x=min, ymin=0, ymax=yfil[xfil == min], color='black', linestyle='--', linewidth=0.6)
+    scatter = plt.scatter(xfil,yfil, label=f'Datos {i-1}',s = 1)
+    han.append(scatter)
 
+linea_punteada = Line2D([0], [0], color='black', linestyle='--', linewidth=1, label='Mínimos locales')
 
-plt.ylabel('')
+han.insert(0, linea_punteada)
+
+plt.legend(handles=han, scatterpoints=1, markerscale=5)
+
+plt.title('Corriente en función del potencial')
+plt.ylabel(r'$U_{1}$  $(V)$', fontsize=15)
+plt.xlabel(r'$I_{A}$  $(nA)$', fontsize=15)
 plt.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
-plt.legend()
-plt.show()
+plt.savefig('Franck-Hertz/Actividad1/Datos_T_cte.png', dpi=300, bbox_inches='tight')

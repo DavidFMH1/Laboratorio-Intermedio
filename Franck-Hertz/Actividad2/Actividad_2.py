@@ -25,7 +25,7 @@ for i in range(0,4):
     mind = np.array(mind)
     mins = xfil[mind]
     for min in mins:
-        plt.axvline(x=min, color='red', linestyle='--', linewidth=1)
+        plt.vlines(x=min, ymin=0, ymax=yfil[xfil == min], color='black', linestyle='--', linewidth=0.6)
     plt.scatter(xfil,yfil, label=f'Datos {180+i*5}',s = 5)
 
 
