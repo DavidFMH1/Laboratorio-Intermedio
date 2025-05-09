@@ -25,7 +25,7 @@ for i in range(6):
     if i != 2:
         path = Spath + f'{10+2*i}'
         x,y = read_data(path)
-        scatter = plt.scatter(x, y, label=f'Datos U2 {(10+2*i)/10}', s=5)
+        scatter = plt.scatter(x, y, label=f'Datos U2 {(10+2*i)/10} V', s=5)
         han.append(scatter)
     
 plt.legend(handles=han, scatterpoints=1, markerscale=5)

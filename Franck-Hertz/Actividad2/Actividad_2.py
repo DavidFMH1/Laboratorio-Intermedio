@@ -11,25 +11,22 @@ Spath = 'Franck-Hertz\\Actividad2\\Datos\\Tconstante_'
 
 def ajuste_minimos_cuadrados(x, y):
     n = len(x)
+    Sx = np.sum(x)
+    Sy = np.sum(y)
+    Sxx = np.sum(x**2)
+    Sxy = np.sum(x * y)
     
-    sum_x = np.sum(x)
-    sum_y = np.sum(y)
-    sum_x2 = np.sum(x**2)
-    sum_xy = np.sum(x * y)
+    m = (n * Sxy - Sx * Sy) / (n * Sxx - Sx**2)
+    b = (Sy * Sxx - Sx * Sxy) / (n * Sxx - Sx**2)
     
-    m = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x**2)
+    y_pred = m * x + b
+    residuals = y - y_pred
+    Sr = np.sum(residuals**2)
     
-    b = (sum_y * sum_x2 - sum_x * sum_xy) / (n * sum_x2 - sum_x**2)
+    dm = np.sqrt((n * Sr) / ((n - 2) * (n * Sxx - Sx**2)))
+    db = np.sqrt((Sr / (n * (n - 2))) * (1 + (Sx**2 / (n * Sxx - Sx**2))))
     
-    y_est = m * x + b
-    residuals = y - y_est
-    sum_res2 = np.sum(residuals**2)
-    
-    delta_m = np.sqrt((n * sum_res2) / ((n - 2) * (n * sum_x2 - sum_x**2)))
-    
-    delta_b = np.sqrt((1 + (sum_x**2) / (n * sum_x2 - sum_x**2)) * sum_res2 / (n * (n - 2)))
-    
-    return m, delta_m, b, delta_b
+    return m, dm, b, db, residuals
 
 def linealfunc(x,a,b):
     return a*x + b
@@ -84,19 +81,30 @@ datos = {
     '180°C': np.array([4.67, 4.91, 4.95, 4.96, 5.02, 5.06])
 }
 
-plt.figure(figsize=(7, 5.5))
+marcadores = ['o', 's', 'D', '^']
+colores = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red']
 
-for label, y in datos.items():
-    m, sigm, b, sifgb = ajuste_minimos_cuadrados(n,y)
-    _x = np.linspace(0,11,3)
-    _y = linealfunc(_x,m,b)
-    plt.plot(_x,_y)
-    plt.scatter(n, y, marker='o', label=f'T = {label}')
-    print(m,b)
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(7, 5.5), sharex=True, gridspec_kw={'hspace': 0, 'height_ratios': [3, 1]})
+x_fit = np.linspace(0, 10.5, 100)
 
-plt.xlabel(r'$n$', fontsize=14)
-plt.ylabel(r'$\Delta E_n$ (eV)', fontsize=14)
-plt.title('Energía vs número cuántico n', fontsize=15)
-plt.grid(True, linestyle='--', alpha=0.6)
-plt.legend()
-plt.show()
+for i, (label, y) in enumerate(datos.items()):
+    m, dm, b, db, residuals = ajuste_minimos_cuadrados(n, y)
+    y_fit = linealfunc(x_fit, m, b)
+
+    ax1.plot(x_fit, y_fit, color=colores[i])
+    ax1.scatter(n, y, label=rf'{label}: $m={m:.2f} \pm {dm:.2f}$, $b={b:.1f} \pm {db:.1f}$',
+                marker=marcadores[i], color=colores[i])
+    
+    ax2.scatter(n, residuals, color=colores[i], marker=marcadores[i], label=label)
+
+ax1.set_ylabel(rf'$\Delta E_n$ (eV)', fontsize=13)
+ax1.set_title('Ajuste lineal de $\Delta E_n$ vs $n$', fontsize=14)
+ax1.grid(True, linestyle='--', alpha=0.6)
+ax1.legend(fontsize=8)
+
+ax2.axhline(0, color='black', linestyle='--', linewidth=1)
+ax2.set_xlabel(r'$n$', fontsize=13)
+ax2.set_ylabel('Residuales', fontsize=11)
+ax2.grid(True, linestyle='--', alpha=0.6)
+
+plt.savefig('Franck-Hertz/Actividad2/ajusteminimos.png', dpi=300, bbox_inches='tight')

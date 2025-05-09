@@ -24,7 +24,7 @@ for i in range(6):
     x,y = read_data(path)
     xfil, yfil = zip(*[(xi, yi) for xi,yi in zip(x,y) if xi < 50])
     xfil, yfil = np.array(list(xfil)), np.array(list(yfil))
-    scatter = plt.scatter(xfil, yfil, label=f'Datos U2 {(58+2*i)/10}', s=5)
+    scatter = plt.scatter(xfil, yfil, label=f'Datos UH {(58+2*i)/10} V', s=5)
     han.append(scatter)
 
 plt.legend(handles=han, scatterpoints=1, markerscale=5)
